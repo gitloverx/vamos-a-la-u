@@ -23,7 +23,7 @@
         .card-text h4, .card-text p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; margin: 0; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col w-full">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col w-full pb-20">
 
     <!-- HEADER -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 w-full shadow-sm">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 class="font-black text-lg tracking-tight text-slate-900 leading-none truncate">VAMOS A LA U</h1>
-                    <span id="active-view-label" class="text-[11px] text-brand-600 font-semibold uppercase tracking-wider block mt-1">Directorio Público</span>
+                    <span class="text-[11px] text-brand-600 font-semibold uppercase tracking-wider block mt-1">Directorio Público</span>
                 </div>
             </div>
             <button onclick="promptAdmin()" class="text-slate-400 hover:text-brand-600 font-bold text-sm flex items-center gap-2 shrink-0 bg-slate-100 px-3 py-2 rounded-lg transition">
@@ -46,15 +46,14 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-5 space-y-6">
         
-        <!-- SECCIÓN: HERO / BIENVENIDA -->
+        <!-- HERO SECTION -->
         <section class="bg-gradient-to-br from-brand-700 to-brand-600 rounded-3xl p-6 sm:p-10 shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="relative z-10 max-w-2xl text-center md:text-left">
-                <span class="bg-brand-800/50 text-brand-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block border border-brand-500/30">Tu futuro empieza aquí</span>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-4">
                     Encuentra tu carrera en la <span class="text-brand-200">Educación Pública</span>
                 </h2>
                 <p class="text-brand-50 text-sm sm:text-base leading-relaxed mb-6 font-medium">
-                    Descubre la oferta académica de las mejores universidades públicas de Colombia. Filtra por tu región, revisa fechas y da el primer paso.
+                    Descubre la oferta académica de las mejores universidades públicas de Colombia. Filtra por tu región, revisa fechas y guarda tus favoritas.
                 </p>
             </div>
             <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none hidden md:block">
@@ -64,49 +63,54 @@
 
         <!-- FILTROS Y BUSCADOR -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col gap-3 w-full">
-            <!-- Barra de búsqueda -->
             <div class="flex gap-3 items-center w-full bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 min-w-0">
                 <i class="fa-solid fa-magnifying-glass text-brand-500 shrink-0"></i>
-                <input type="text" id="search-input" placeholder="Busca una carrera (Ej: Medicina, Derecho...)" oninput="applyFilters()" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
+                <input type="text" id="search-input" placeholder="Busca una carrera o universidad..." oninput="applyFilters()" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
             </div>
             
-            <!-- Selectores de territorio -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full">
                 <select id="filter-dept" onchange="updateCities(); applyFilters();" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
                     <option value="">Todos los Departamentos</option>
                 </select>
-                
                 <select id="filter-city" onchange="applyFilters();" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
                     <option value="">Todas las Ciudades</option>
                 </select>
-
                 <button onclick="clearFilters()" class="bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold py-2.5 rounded-xl text-sm transition border border-brand-100 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-filter-circle-xmark"></i> Limpiar Filtros
                 </button>
             </div>
             
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider text-right mt-1">
-                Mostrando <span id="count-total" class="text-brand-600 text-base">0</span> carreras
+            <div class="flex justify-between items-center mt-1">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <span id="count-total" class="text-brand-600 text-base">0</span> carreras encontradas
+                </span>
             </div>
         </div>
 
-        <!-- VISTA 1: UNIVERSIDADES -->
+        <!-- NAVEGACIÓN DE PESTAÑAS (Todas / Favoritos) -->
+        <div class="flex gap-2 border-b border-slate-200 pb-2">
+            <button onclick="switchTab('todas')" id="tab-todas" class="px-4 py-2 text-sm font-bold text-brand-600 border-b-2 border-brand-600">Explorar</button>
+            <button onclick="switchTab('favoritos')" id="tab-favoritos" class="px-4 py-2 text-sm font-bold text-slate-400 hover:text-slate-600 flex items-center gap-2">
+                Mis Favoritos <span id="fav-count" class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full text-[10px]">0</span>
+            </button>
+        </div>
+
+        <!-- VISTA 1: TODAS LAS UNIVERSIDADES -->
         <div id="view-universidades" class="space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800 px-1 flex items-center gap-2">
-                <i class="fa-solid fa-building-columns text-brand-600"></i> Universidades Públicas
-            </h2>
             <div id="grid-universidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
         </div>
 
         <!-- VISTA 2: RESULTADOS DE BÚSQUEDA -->
         <div id="view-carreras" class="hidden space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800 px-1 flex items-center gap-2" id="titulo-carreras">
-                <i class="fa-solid fa-magnifying-glass text-brand-600"></i> Resultados
-            </h2>
             <div id="grid-carreras" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
         </div>
 
-        <!-- VISTA 3: ADMIN -->
+        <!-- VISTA 3: FAVORITOS -->
+        <div id="view-favoritos" class="hidden space-y-4 w-full">
+            <div id="grid-favoritos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
+        </div>
+
+        <!-- VISTA 4: ADMIN -->
         <div id="view-admin" class="hidden space-y-4 w-full">
             <h2 class="text-lg font-black text-slate-800 px-1 flex items-center gap-2">
                 <i class="fa-solid fa-shield-halved text-slate-600"></i> Panel de Administración
@@ -155,9 +159,25 @@
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         let db, auth; let universities = []; let programs = []; let isAdmin = false;
+        let currentTab = 'todas';
+        let favorites = JSON.parse(localStorage.getItem('vamos_favorites') || '[]');
         
         const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const formatCost = (c) => { return typeof c === 'number' ? '$' + c.toLocaleString('es-CO') : c; };
+
+        // LÓGICA DEL SEMÁFORO DE INSCRIPCIÓN
+        function getInscriptionStatus(startDate, endDate) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            if (isNaN(start) || isNaN(end)) return { text: 'Consultar', color: 'bg-slate-100 text-slate-600' };
+            
+            if (today > end) return { text: 'Cerrado', color: 'bg-rose-100 text-rose-700 border border-rose-200' };
+            if (today < start) return { text: 'Próximamente', color: 'bg-amber-100 text-amber-700 border border-amber-200' };
+            return { text: '¡Abierto!', color: 'bg-emerald-100 text-emerald-700 border border-emerald-200' };
+        }
 
         async function initFirebase() {
             try {
@@ -190,16 +210,85 @@
         window.updateCities = function() {
             const dept = document.getElementById('filter-dept').value;
             const citySelect = document.getElementById('filter-city');
-            
-            let cities = [];
-            if (dept) {
-                cities = [...new Set(universities.filter(u => u.department === dept).map(u => u.city).filter(Boolean))].sort();
-            } else {
-                cities = [...new Set(universities.map(u => u.city).filter(Boolean))].sort();
-            }
-            
+            let cities = dept 
+                ? [...new Set(universities.filter(u => u.department === dept).map(u => u.city).filter(Boolean))].sort()
+                : [...new Set(universities.map(u => u.city).filter(Boolean))].sort();
             citySelect.innerHTML = '<option value="">Todas las Ciudades</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
         };
+
+        window.switchTab = function(tab) {
+            currentTab = tab;
+            document.getElementById('tab-todas').className = tab === 'todas' ? "px-4 py-2 text-sm font-bold text-brand-600 border-b-2 border-brand-600" : "px-4 py-2 text-sm font-bold text-slate-400 hover:text-slate-600";
+            document.getElementById('tab-favoritos').className = tab === 'favoritos' ? "px-4 py-2 text-sm font-bold text-brand-600 border-b-2 border-brand-600 flex items-center gap-2" : "px-4 py-2 text-sm font-bold text-slate-400 hover:text-slate-600 flex items-center gap-2";
+            
+            document.getElementById('view-favoritos').classList.add('hidden');
+            document.getElementById('view-carreras').classList.add('hidden');
+            document.getElementById('view-universidades').classList.add('hidden');
+            
+            if (tab === 'favoritos') {
+                document.getElementById('view-favoritos').classList.remove('hidden');
+                renderFavorites();
+            } else {
+                applyFilters();
+            }
+        };
+
+        window.toggleFavorite = function(fbId, event) {
+            event.stopPropagation(); // Evita que se abra el modal
+            const index = favorites.indexOf(fbId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(fbId);
+            }
+            localStorage.setItem('vamos_favorites', JSON.stringify(favorites));
+            updateFavCount();
+            refreshUI(); // Vuelve a pintar para actualizar los corazones
+            if (currentTab === 'favoritos') renderFavorites();
+        };
+
+        function updateFavCount() {
+            document.getElementById('fav-count').textContent = favorites.length;
+        }
+
+        function renderFavorites() {
+            const favPrograms = programs.filter(p => favorites.includes(p.firebaseId));
+            const grid = document.getElementById('grid-favoritos');
+            
+            if (favPrograms.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200">
+                    <i class="fa-regular fa-heart text-4xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-500 text-sm">Aún no has guardado ninguna carrera.</p>
+                    <p class="text-slate-400 text-xs mt-1">Toca el corazón en las tarjetas para guardarlas aquí.</p>
+                </div>`;
+                return;
+            }
+
+            grid.innerHTML = favPrograms.map(p => createProgramCard(p)).join('');
+        }
+
+        function createProgramCard(p) {
+            const u = universities.find(x => x.id === p.universityId);
+            const isFav = favorites.includes(p.firebaseId);
+            const status = getInscriptionStatus(p.inscriptionStart, p.inscriptionEnd);
+
+            return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 transition flex flex-col justify-between">
+                <div class="flex justify-between items-start gap-2 mb-2">
+                    <div class="min-w-0 flex-1">
+                        <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(p.name)}</h4>
+                        <p class="text-[11px] text-slate-500 truncate mt-1"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
+                    </div>
+                    <button onclick="toggleFavorite('${p.firebaseId}', event)" class="text-lg p-1 transition shrink-0 ${isFav ? 'text-rose-500' : 'text-slate-300 hover:text-rose-400'}">
+                        <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-2 flex flex-wrap gap-2 items-center">
+                    <span class="text-[10px] font-bold px-2 py-1 rounded-md ${status.color}">${status.text}</span>
+                    <span class="bg-brand-50 text-brand-700 text-[10px] font-bold px-2 py-1 rounded-md border border-brand-100">${escapeHtml(p.period)}</span>
+                </div>
+            </div>`;
+        }
 
         window.clearFilters = function() {
             document.getElementById('search-input').value = '';
@@ -210,30 +299,21 @@
         };
 
         window.promptAdmin = function() {
-            if (isAdmin) { 
-                document.getElementById('view-universidades').classList.add('hidden'); 
-                document.getElementById('view-admin').classList.remove('hidden'); 
-                return; 
-            }
+            if (isAdmin) { document.getElementById('view-admin').classList.remove('hidden'); document.getElementById('view-universidades').classList.add('hidden'); return; }
             const pass = prompt("Contraseña de Admin:");
-            if (pass === "2026") { 
-                isAdmin = true; 
-                document.getElementById('view-universidades').classList.add('hidden'); 
-                document.getElementById('view-admin').classList.remove('hidden'); 
-            } else if (pass !== null) { alert("Incorrecta"); }
+            if (pass === "2026") { isAdmin = true; document.getElementById('view-admin').classList.remove('hidden'); document.getElementById('view-universidades').classList.add('hidden'); }
         };
 
         window.logoutAdmin = function() { isAdmin = false; document.getElementById('view-admin').classList.add('hidden'); document.getElementById('view-universidades').classList.remove('hidden'); };
 
-        // LOGICA DE FILTRADO COMBINADO (Texto + Dept + Ciudad)
         window.applyFilters = function() {
+            if (currentTab === 'favoritos') { switchTab('todas'); return; }
+
             const term = (document.getElementById('search-input').value || '').toLowerCase().trim();
             const dept = document.getElementById('filter-dept').value;
             const city = document.getElementById('filter-city').value;
             
-            const isFiltering = term || dept || city;
-            
-            if (!isFiltering) { 
+            if (!term && !dept && !city) { 
                 document.getElementById('view-carreras').classList.add('hidden'); 
                 document.getElementById('view-universidades').classList.remove('hidden'); 
                 return; 
@@ -242,27 +322,21 @@
             document.getElementById('view-universidades').classList.add('hidden');
             document.getElementById('view-carreras').classList.remove('hidden');
             
-            // 1. Filtrar universidades por territorio
             const validUniversities = universities.filter(u => {
                 if (dept && u.department !== dept) return false;
                 if (city && u.city !== city) return false;
                 return true;
             });
             
-            // 2. Filtrar programas
             let matchedPrograms = programs.filter(p => {
                 const u = validUniversities.find(x => x.id === p.universityId);
-                if (!u) return false; // Si la universidad no está en el territorio, se descarta
-                
+                if (!u) return false;
                 if (term) {
-                    const matchProgram = p.name.toLowerCase().includes(term);
-                    const matchUni = u.name.toLowerCase().includes(term);
-                    if (!matchProgram && !matchUni) return false;
+                    if (!p.name.toLowerCase().includes(term) && !u.name.toLowerCase().includes(term)) return false;
                 }
                 return true;
             });
             
-            // 3. Agrupar por universidad
             const uniMap = {};
             matchedPrograms.forEach(p => {
                 if (!uniMap[p.universityId]) {
@@ -275,13 +349,6 @@
             const groupedResults = Object.values(uniMap);
             document.getElementById('count-total').textContent = matchedPrograms.length;
             
-            let titleText = 'Resultados';
-            if (term) titleText += ` para "${term}"`;
-            if (city) titleText += ` en ${city}`;
-            else if (dept) titleText += ` en ${dept}`;
-            
-            document.getElementById('titulo-carreras').innerHTML = `<i class="fa-solid fa-building-columns text-brand-600"></i> ${titleText} (${groupedResults.length})`;
-            
             document.getElementById('grid-carreras').innerHTML = groupedResults.map(group => {
                 return `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-brand-500 transition flex flex-col justify-between">
                     <div class="flex items-center gap-3 mb-3 border-b border-slate-100 pb-3">
@@ -290,50 +357,61 @@
                         </div>
                         <div class="min-w-0">
                             <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(group.uni.name)}</h4>
-                            <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(group.uni.city)}, ${escapeHtml(group.uni.department)}</p>
+                            <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(group.uni.city)}</p>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 flex-1">
-                        <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Programa(s) encontrado(s):</p>
-                        <ul class="list-disc list-inside text-xs text-brand-700 font-bold space-y-1">
-                            ${group.programs.map(p => `<li>${escapeHtml(p.name)}</li>`).join('')}
-                        </ul>
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 flex-1 space-y-2">
+                        ${group.programs.map(p => {
+                            const isFav = favorites.includes(p.firebaseId);
+                            const status = getInscriptionStatus(p.inscriptionStart, p.inscriptionEnd);
+                            return `<div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200">
+                                <div class="min-w-0">
+                                    <p class="text-xs text-brand-700 font-bold truncate">${escapeHtml(p.name)}</p>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${status.color} mt-1 inline-block">${status.text}</span>
+                                </div>
+                                <button onclick="toggleFavorite('${p.firebaseId}', event)" class="text-sm px-2 ${isFav ? 'text-rose-500' : 'text-slate-300 hover:text-rose-400'}">
+                                    <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                                </button>
+                            </div>`;
+                        }).join('')}
                     </div>
-                    <button onclick="openDetail('${group.programs[0].firebaseId}')" class="mt-3 w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2 rounded-lg transition">
-                        Ver detalles de inscripción
-                    </button>
                 </div>`;
-            }).join('') || `<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200"><i class="fa-solid fa-map-location-dot text-4xl text-slate-300 mb-3"></i><p class="text-slate-500 text-sm">No hay oferta académica que coincida con estos filtros.</p></div>`;
+            }).join('') || `<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500 text-sm">No hay resultados.</p></div>`;
         };
 
         function refreshUI() {
             document.getElementById('stat-universities').textContent = universities.length;
             document.getElementById('stat-programs').textContent = programs.length;
-            document.getElementById('count-total').textContent = programs.length;
+            updateFavCount();
 
             document.getElementById('grid-universidades').innerHTML = universities.map(u => {
                 const progCount = programs.filter(p => p.universityId === u.id).length;
                 return `<div onclick="document.getElementById('search-input').value='${escapeHtml(u.name)}'; applyFilters();" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer card hover:border-brand-500 transition">
-                    
                     <div class="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 shrink-0 mr-3">
                         <i class="fa-solid fa-building-columns text-xl"></i>
                     </div>
-
                     <div class="card-text">
                         <h4 class="font-bold text-sm text-slate-900">${escapeHtml(u.name)}</h4>
-                        <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)} - ${escapeHtml(u.department)}</p>
+                        <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)}</p>
                         <p class="text-[10px] font-bold text-brand-600 mt-1">${progCount} carreras</p>
                     </div>
-                    
                     <i class="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0 ml-2"></i>
                 </div>`;
             }).join('');
+            
+            if (currentTab === 'favoritos') renderFavorites();
+            if (document.getElementById('search-input').value) applyFilters();
         }
 
         window.openDetail = function (fbId) {
             const p = programs.find(x => x.firebaseId === fbId); if (!p) return; const u = universities.find(x => x.id === p.universityId);
+            const status = getInscriptionStatus(p.inscriptionStart, p.inscriptionEnd);
+            
             document.getElementById('pd-name').textContent = p.name; document.getElementById('pd-university').textContent = u ? u.name : '';
             document.getElementById('pd-body').innerHTML = `
+                <div class="flex gap-2 mb-2">
+                    <span class="text-xs font-bold px-3 py-1.5 rounded-lg ${status.color}"><i class="fa-solid fa-circle text-[8px] mr-1 align-middle"></i> Inscripciones: ${status.text}</span>
+                </div>
                 <div class="bg-brand-50 p-4 rounded-xl border border-brand-100">
                     <p class="text-[10px] font-bold text-brand-700 uppercase tracking-wider">Costo de Inscripción</p>
                     <p class="text-lg font-black text-brand-700 mt-1">${escapeHtml(formatCost(p.cost))}</p>
@@ -341,13 +419,13 @@
                 <div class="bg-white border border-slate-200 p-4 rounded-xl">
                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Fechas (${escapeHtml(p.period)})</p>
                     <div class="flex justify-between text-sm py-1 border-b border-slate-100"><span class="text-slate-500">Inicio</span><span class="font-bold text-slate-800">${escapeHtml(p.inscriptionStart)}</span></div>
-                    <div class="flex justify-between text-sm py-1 mt-1"><span class="text-slate-500">Fin</span><span class="font-bold text-rose-600">${escapeHtml(p.inscriptionEnd)}</span></div>
+                    <div class="flex justify-between text-sm py-1 mt-1"><span class="text-slate-500">Cierre</span><span class="font-bold text-rose-600">${escapeHtml(p.inscriptionEnd)}</span></div>
                 </div>
                 <div class="bg-white border border-slate-200 p-4 rounded-xl">
                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Requisitos</p>
                     <p class="text-xs text-slate-700">${escapeHtml(p.requirements || 'Consultar sitio web')}</p>
                 </div>
-                <a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-brand-600 hover:bg-brand-700 text-white text-center py-3 rounded-xl font-bold text-sm shadow-md transition">Visitar Sitio Oficial</a>`;
+                <a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-brand-600 hover:bg-brand-700 text-white text-center py-3 rounded-xl font-bold text-sm shadow-md transition">Ir al Sitio Web</a>`;
             document.getElementById('detail-modal').classList.remove('hidden');
         };
 
