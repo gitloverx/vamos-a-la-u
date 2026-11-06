@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0d9488">
-    <title>Vamos a la U | Buscador de Universidades</title>
+    <title>Vamos a la U | Directorio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,52 +17,60 @@
             fontFamily: { sans: ['Inter', 'sans-serif'] }
         }}}
     </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; touch-action: manipulation; overflow-x: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-20 select-none">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-20 select-none w-full">
 
-    <div id="main-app" class="flex-1 flex flex-col">
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-sm">
+    <div id="main-app" class="flex-1 flex flex-col w-full">
+        <!-- HEADER -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-sm w-full">
             <div class="flex items-center gap-2">
-                <div class="bg-brand-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow-sm"><i class="fa-solid fa-graduation-cap"></i></div>
-                <div>
-                    <h1 class="font-black text-xs tracking-tight text-slate-900 leading-none">VAMOS A LA U</h1>
+                <div class="bg-brand-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shadow-sm shrink-0"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="min-w-0">
+                    <h1 class="font-black text-sm tracking-tight text-slate-900 leading-none truncate">VAMOS A LA U</h1>
                     <span id="active-view-label" class="text-[10px] text-brand-600 font-semibold uppercase tracking-wider">Directorio</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 shrink-0">
                 <span id="sync-indicator" class="flex h-2 w-2 relative"><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
             </div>
         </header>
 
-        <main class="flex-1 max-w-md w-full mx-auto p-3 space-y-3">
-            <!-- BARRA DE BÚSQUEDA -->
-            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex gap-2 items-center sticky top-[60px] z-30">
-                <i class="fa-solid fa-magnifying-glass text-brand-500 pl-1 text-sm"></i>
-                <input type="text" id="search-input" placeholder="Buscar carrera (Ej: Medicina, Sistemas)..." oninput="handleSearch(this.value)" class="w-full bg-transparent text-sm focus:outline-none font-medium placeholder:text-slate-400 text-slate-800">
-                <button onclick="clearSearch()" class="text-slate-400 hover:text-brand-600 px-2 text-xs hidden" id="clear-btn"><i class="fa-solid fa-xmark"></i></button>
+        <!-- CONTENIDO -->
+        <main class="flex-1 w-full max-w-lg mx-auto p-3 space-y-3 overflow-x-hidden">
+            
+            <!-- BUSCADOR -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex gap-2 items-center sticky top-[60px] z-30 w-full">
+                <i class="fa-solid fa-magnifying-glass text-brand-500 pl-1 text-sm shrink-0"></i>
+                <input type="text" id="search-input" placeholder="Buscar carrera..." oninput="handleSearch(this.value)" class="w-full bg-transparent text-sm focus:outline-none font-medium placeholder:text-slate-400 text-slate-800 min-w-0">
+                <button onclick="clearSearch()" class="text-slate-400 hover:text-brand-600 px-2 text-xs hidden shrink-0" id="clear-btn"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- VISTA 1: DIRECTORIO DE UNIVERSIDADES (Por defecto) -->
-            <div id="view-universidades" class="space-y-3">
+            <!-- VISTA 1: DIRECTORIO -->
+            <div id="view-universidades" class="space-y-3 w-full">
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Universidades Públicas</span>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Universidades</span>
                     <span class="text-[10px] text-brand-600 font-bold bg-brand-50 px-2 py-0.5 rounded-full" id="count-universidades">0</span>
                 </div>
-                <div id="lista-universidades" class="space-y-3"></div>
+                <div id="lista-universidades" class="space-y-2.5 w-full"></div>
             </div>
 
-            <!-- VISTA 2: RESULTADOS DE BÚSQUEDA (Oculta) -->
-            <div id="view-carreras" class="hidden space-y-3">
+            <!-- VISTA 2: RESULTADOS -->
+            <div id="view-carreras" class="hidden space-y-3 w-full">
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Carreras Encontradas</span>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Resultados</span>
                     <span class="text-[10px] text-accent-600 font-bold bg-accent-50 px-2 py-0.5 rounded-full" id="count-carreras">0</span>
                 </div>
-                <div id="lista-carreras" class="space-y-3"></div>
+                <div id="lista-carreras" class="space-y-2.5 w-full"></div>
             </div>
 
             <!-- VISTA 3: ADMIN -->
-            <div id="view-admin" class="hidden space-y-3">
-                <div class="grid grid-cols-2 gap-2.5">
+            <div id="view-admin" class="hidden space-y-3 w-full">
+                <div class="grid grid-cols-2 gap-2.5 w-full">
                     <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-brand-500">
                         <span class="text-[10px] uppercase font-bold text-slate-400">Universidades</span>
                         <h3 id="stat-universities" class="text-xl font-black text-slate-900 mt-1">0</h3>
@@ -72,11 +80,25 @@
                         <h3 id="stat-programs" class="text-xl font-black text-slate-900 mt-1">0</h3>
                     </div>
                 </div>
+
+                <!-- FORMULARIO PARA AGREGAR PROGRAMA -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full">
+                    <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-plus-circle text-brand-500 mr-1"></i> Nuevo Programa</h3>
+                    <input type="text" id="add-name" placeholder="Nombre de la carrera (Ej: Medicina)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+                    <select id="add-uni" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-500"></select>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="add-period" placeholder="Periodo (Ej: 2026-1)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+                        <input type="number" id="add-cost" placeholder="Costo $" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+                    </div>
+                    <button onclick="saveNewProgram()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Guardar Programa</button>
+                </div>
+
                 <button onclick="logoutAdmin()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-xs">Salir de Admin</button>
             </div>
         </main>
 
-        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-3 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
+        <!-- MENÚ INFERIOR -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-3 flex justify-around items-center z-40 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
             <button onclick="switchView('universidades')" id="nav-btn-universidades" class="flex flex-col items-center gap-1 text-brand-600 transition w-1/2">
                 <i class="fa-solid fa-building-columns text-base"></i><span class="text-[10px] font-bold">Universidades</span>
             </button>
@@ -87,13 +109,13 @@
     </div>
 
     <!-- MODAL DETALLE -->
-    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden overflow-y-auto">
-        <div class="min-h-full flex items-start justify-center p-3 py-6">
+    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden overflow-y-auto w-full">
+        <div class="min-h-full flex items-start justify-center p-3 py-6 w-full">
             <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden">
                 <div class="bg-brand-600 text-white p-5">
                     <div class="flex justify-between items-start gap-2">
-                        <div class="min-w-0"><h3 id="pd-name" class="font-black text-lg leading-tight"></h3><p id="pd-university" class="text-[11px] opacity-90 mt-1"></p></div>
-                        <button onclick="closeModal('detail-modal')" class="text-white/80 bg-white/20 p-2 rounded-full"><i class="fa-solid fa-xmark text-sm"></i></button>
+                        <div class="min-w-0"><h3 id="pd-name" class="font-black text-lg leading-tight break-words"></h3><p id="pd-university" class="text-[11px] opacity-90 mt-1 break-words"></p></div>
+                        <button onclick="closeModal('detail-modal')" class="text-white/80 bg-white/20 p-2 rounded-full shrink-0"><i class="fa-solid fa-xmark text-sm"></i></button>
                     </div>
                 </div>
                 <div class="p-5 space-y-3" id="pd-body"></div>
@@ -114,7 +136,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         let db, auth; let universities = []; let programs = []; let isAdmin = false;
         
@@ -133,6 +155,7 @@
             onSnapshot(collection(db, 'vamos_universities'), (snapshot) => { 
                 universities = snapshot.docs.map(d => ({ firebaseId: d.id, ...d.data() })); 
                 universities.sort((a, b) => (a.name || '').localeCompare(b.name || '')); 
+                document.getElementById('add-uni').innerHTML = universities.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join('');
                 refreshUI(); 
             });
             onSnapshot(collection(db, 'vamos_programs'), (snapshot) => { 
@@ -144,14 +167,19 @@
         window.switchView = function (view) {
             ['universidades','carreras','admin'].forEach(v => { document.getElementById(`view-${v}`).classList.add('hidden'); });
             document.getElementById(`view-${view}`).classList.remove('hidden');
-            document.getElementById('active-view-label').textContent = view === 'universidades' ? 'Directorio' : (view === 'carreras' ? 'Buscador' : 'Admin');
+            document.getElementById('active-view-label').textContent = view === 'universidades' ? 'Directorio' : (view === 'carreras' ? 'Buscador' : 'Panel Admin');
+            
+            // Actualizar botones del menú
+            document.getElementById('nav-btn-universidades').className = view === 'universidades' ? "flex flex-col items-center gap-1 text-brand-600 transition w-1/2" : "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition w-1/2";
+            document.getElementById('nav-btn-admin').className = view === 'admin' ? "flex flex-col items-center gap-1 text-accent-600 transition w-1/2" : "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition w-1/2";
+            
             refreshUI();
         };
 
         window.promptAdmin = function() {
             if (isAdmin) { switchView('admin'); return; }
             const pass = prompt("Ingrese contraseña de administrador:");
-            if (pass === "2026") { isAdmin = true; switchView('admin'); } else if (pass !== null) { alert("Incorrecta"); }
+            if (pass === "2026") { isAdmin = true; switchView('admin'); } else if (pass !== null) { alert("Contraseña incorrecta"); }
         };
 
         window.logoutAdmin = function() { isAdmin = false; switchView('universidades'); };
@@ -170,10 +198,10 @@
             document.getElementById('count-carreras').textContent = results.length;
             document.getElementById('lista-carreras').innerHTML = results.map(p => {
                 const u = universities.find(x => x.id === p.universityId);
-                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-300">
-                    <h4 class="font-bold text-sm text-slate-900">${escapeHtml(p.name)}</h4>
-                    <p class="text-[11px] text-slate-500 mt-1"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
-                    <div class="flex gap-2 mt-2">
+                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-300 w-full">
+                    <h4 class="font-bold text-sm text-slate-900 break-words">${escapeHtml(p.name)}</h4>
+                    <p class="text-[11px] text-slate-500 mt-1 break-words"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
+                    <div class="flex flex-wrap gap-2 mt-2">
                         <span class="bg-brand-50 text-brand-700 text-[9px] font-bold px-2 py-0.5 rounded border border-brand-100">${escapeHtml(p.period)}</span>
                         <span class="bg-slate-100 text-slate-600 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200">${formatCOP(p.cost)}</span>
                     </div>
@@ -191,17 +219,16 @@
             document.getElementById('stat-programs').textContent = programs.length;
             document.getElementById('count-universidades').textContent = universities.length;
 
-            // Render directorio de universidades
             document.getElementById('lista-universidades').innerHTML = universities.map(u => {
                 const progCount = programs.filter(p => p.universityId === u.id).length;
-                return `<div onclick="searchUniversity('${u.name}')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-300">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 font-black text-sm">${escapeHtml(u.shortName || u.name.substring(0,2))}</div>
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(u.name)}</h4>
+                return `<div onclick="searchUniversity('${escapeHtml(u.name)}')" class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-300 w-full">
+                    <div class="flex items-center gap-3 w-full">
+                        <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 font-black text-sm shrink-0">${escapeHtml(u.shortName || u.name.substring(0,2))}</div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-slate-900 truncate">${escapeHtml(u.name)}</h4>
                             <p class="text-[10px] text-slate-500">${escapeHtml(u.city)} · ${progCount} programas</p>
                         </div>
-                        <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+                        <i class="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0"></i>
                     </div>
                 </div>`;
             }).join('');
@@ -215,8 +242,27 @@
         window.openDetail = function (fbId) {
             const p = programs.find(x => x.firebaseId === fbId); if (!p) return; const u = universities.find(x => x.id === p.universityId);
             document.getElementById('pd-name').textContent = p.name; document.getElementById('pd-university').textContent = u ? u.name : '';
-            document.getElementById('pd-body').innerHTML = `<div class="bg-brand-50 p-4 rounded-2xl"><p class="text-[10px] font-bold text-brand-700 uppercase">Inscripción</p><p class="text-xl font-black text-brand-700">${formatCOP(p.cost)}</p></div><div class="bg-white border border-slate-200 p-4 rounded-2xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Fechas (${escapeHtml(p.period)})</p><div class="flex justify-between text-xs"><span class="text-slate-500">Inicio</span><span class="font-bold">${formatDate(p.inscriptionStart)}</span></div><div class="flex justify-between text-xs mt-1"><span class="text-slate-500">Fin</span><span class="font-bold text-rose-600">${formatDate(p.inscriptionEnd)}</span></div></div><div class="bg-white border border-slate-200 p-4 rounded-2xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Requisitos</p><p class="text-xs text-slate-700">${escapeHtml(p.requirements)}</p></div><a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-accent-600 text-white text-center py-3 rounded-2xl font-bold text-sm">Visitar Sitio Web</a>`;
+            document.getElementById('pd-body').innerHTML = `<div class="bg-brand-50 p-4 rounded-2xl"><p class="text-[10px] font-bold text-brand-700 uppercase">Inscripción</p><p class="text-xl font-black text-brand-700">${formatCOP(p.cost)}</p></div><div class="bg-white border border-slate-200 p-4 rounded-2xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Fechas (${escapeHtml(p.period)})</p><div class="flex justify-between text-xs"><span class="text-slate-500">Inicio</span><span class="font-bold">${formatDate(p.inscriptionStart)}</span></div><div class="flex justify-between text-xs mt-1"><span class="text-slate-500">Fin</span><span class="font-bold text-rose-600">${formatDate(p.inscriptionEnd)}</span></div></div><div class="bg-white border border-slate-200 p-4 rounded-2xl"><p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Requisitos</p><p class="text-xs text-slate-700">${escapeHtml(p.requirements || 'No registrados')}</p></div><a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-accent-600 text-white text-center py-3 rounded-2xl font-bold text-sm shadow-md">Visitar Sitio Web</a>`;
             document.getElementById('detail-modal').classList.remove('hidden');
+        };
+
+        window.saveNewProgram = async function() {
+            const name = document.getElementById('add-name').value.trim();
+            const uniId = parseInt(document.getElementById('add-uni').value);
+            const period = document.getElementById('add-period').value.trim();
+            const cost = parseInt(document.getElementById('add-cost').value) || 0;
+            if(!name || !uniId) { alert("Por favor llena el nombre y selecciona una universidad."); return; }
+            try {
+                await addDoc(collection(db, "vamos_programs"), {
+                    name, universityId: uniId, period: period || "2026-1", cost,
+                    area: "General", level: "Pregrado", duration: "10 semestres",
+                    inscriptionStart: "", inscriptionEnd: "", requirements: "Consultar sitio web", examType: "Prueba ICFES"
+                });
+                document.getElementById('add-name').value = '';
+                document.getElementById('add-period').value = '';
+                document.getElementById('add-cost').value = '';
+                alert("Programa guardado con éxito.");
+            } catch(e) { alert("Error al guardar"); console.error(e); }
         };
 
         window.closeModal = function (id) { document.getElementById(id).classList.add('hidden'); };
