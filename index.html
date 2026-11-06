@@ -112,7 +112,7 @@
         let db, auth; let universities = []; let programs = []; let isAdmin = false;
         
         const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        const formatCOP = (n) => '$' + (Number(n) || 0).toLocaleString('es-CO');
+        nst formatCOP = (n) => n;
         const formatDate = (iso) => { if (!iso) return 'No definida'; const [y,m,d] = String(iso).split('-'); return `${d}/${m}/${y}`; };
 
         async function initFirebase() {
