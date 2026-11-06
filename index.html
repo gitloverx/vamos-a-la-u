@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0d9488">
-    <title>Vamos a la U | Directorio</title>
+    <title>Vamos a la U | Directorio V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,34 +18,36 @@
         }}}
     </script>
     <style>
-        body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        /* CSS de emergencia para bloquear cualquier desbordamiento */
+        body { -webkit-tap-highlight-color: transparent; overflow-x: hidden !important; width: 100%; }
+        .card-container { width: 100%; max-width: 100%; overflow: hidden; display: flex; align-items: center; }
+        .text-container { flex: 1; min-width: 0; overflow: hidden; }
+        .truncate-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col w-full">
 
-    <!-- HEADER -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 w-full shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="w-full max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="bg-brand-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg shadow-sm shrink-0">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="font-black text-lg tracking-tight text-slate-900 leading-none truncate">VAMOS A LA U</h1>
+                    <!-- AQUÍ ESTÁ LA PRUEBA: V. 2.0 -->
+                    <h1 class="font-black text-lg tracking-tight text-slate-900 leading-none truncate">VAMOS A LA U <span class="text-xs text-rose-500 bg-rose-100 px-2 py-0.5 rounded-md ml-1">V. 2.0</span></h1>
                     <span id="active-view-label" class="text-[11px] text-brand-600 font-semibold uppercase tracking-wider block mt-1">Directorio</span>
                 </div>
             </div>
             <button onclick="promptAdmin()" class="text-slate-400 hover:text-brand-600 font-bold text-sm flex items-center gap-2 shrink-0 bg-slate-100 px-3 py-2 rounded-lg transition">
-                <i class="fa-solid fa-lock"></i> <span class="hidden sm:inline">Admin</span>
+                <i class="fa-solid fa-lock"></i>
             </button>
         </div>
     </header>
 
-    <!-- CONTENIDO -->
-    <main class="flex-1 w-full max-w-7xl mx-auto p-4 space-y-5">
+    <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-4 space-y-5">
         
-        <!-- BUSCADOR -->
-        <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 items-center w-full">
+        <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 items-center w-full card-container">
             <div class="flex gap-3 items-center w-full bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 min-w-0">
                 <i class="fa-solid fa-magnifying-glass text-brand-500 shrink-0"></i>
                 <input type="text" id="search-input" placeholder="Buscar carrera..." oninput="handleSearch(this.value)" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
@@ -56,45 +58,41 @@
             </div>
         </div>
 
-        <!-- VISTA 1: UNIVERSIDADES -->
         <div id="view-universidades" class="space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800 px-1">Universidades Públicas</h2>
-            <div id="grid-universidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
+            <h2 class="text-lg font-black text-slate-800 px-1">Universidades</h2>
+            <div id="grid-universidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
         </div>
 
-        <!-- VISTA 2: CARRERAS -->
         <div id="view-carreras" class="hidden space-y-4 w-full">
             <h2 class="text-lg font-black text-slate-800 px-1" id="titulo-carreras">Resultados</h2>
-            <div id="grid-carreras" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
+            <div id="grid-carreras" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
         </div>
 
-        <!-- VISTA 3: ADMIN -->
         <div id="view-admin" class="hidden space-y-4 w-full">
             <h2 class="text-lg font-black text-slate-800 px-1">Panel Admin</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-md">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 border-l-4 border-l-brand-500 shadow-sm">
+            <div class="grid grid-cols-2 gap-3 max-w-md">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                     <span class="text-[10px] uppercase font-bold text-slate-400">Universidades</span>
                     <h3 id="stat-universities" class="text-2xl font-black text-slate-900 mt-1">0</h3>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 border-l-4 border-l-accent-500 shadow-sm">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                     <span class="text-[10px] uppercase font-bold text-slate-400">Carreras</span>
                     <h3 id="stat-programs" class="text-2xl font-black text-slate-900 mt-1">0</h3>
                 </div>
             </div>
-            <button onclick="logoutAdmin()" class="bg-slate-200 hover:bg-rose-100 text-slate-700 hover:text-rose-700 font-bold py-2.5 px-6 rounded-xl text-sm transition">Cerrar Sesión</button>
+            <button onclick="logoutAdmin()" class="bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl text-sm transition">Cerrar Sesión</button>
         </div>
     </main>
 
-    <!-- MODAL DETALLE -->
-    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden overflow-y-auto">
-        <div class="min-h-full flex items-center justify-center p-4">
+    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden overflow-y-auto">
+        <div class="min-h-full flex items-center justify-center p-3">
             <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden">
-                <div class="bg-brand-600 text-white p-6 relative">
-                    <button onclick="closeModal('detail-modal')" class="absolute top-4 right-4 text-white/80 bg-white/20 p-2 rounded-full hover:bg-white/30"><i class="fa-solid fa-xmark"></i></button>
+                <div class="bg-brand-600 text-white p-5 relative">
+                    <button onclick="closeModal('detail-modal')" class="absolute top-4 right-4 text-white/80 bg-white/20 p-2 rounded-full"><i class="fa-solid fa-xmark"></i></button>
                     <h3 id="pd-name" class="font-black text-xl pr-10 leading-tight break-words"></h3>
-                    <p id="pd-university" class="text-sm opacity-90 mt-2 font-medium break-words"></p>
+                    <p id="pd-university" class="text-sm opacity-90 mt-1 font-medium break-words"></p>
                 </div>
-                <div class="p-5 space-y-4" id="pd-body"></div>
+                <div class="p-5 space-y-3" id="pd-body"></div>
             </div>
         </div>
     </div>
@@ -141,9 +139,6 @@
         window.switchView = function (view) {
             ['universidades','carreras','admin'].forEach(v => { document.getElementById(`view-${v}`).classList.add('hidden'); });
             document.getElementById(`view-${view}`).classList.remove('hidden');
-            if(view === 'admin') document.getElementById('active-view-label').textContent = 'Panel Admin';
-            else if(view === 'carreras') document.getElementById('active-view-label').textContent = 'Buscador';
-            else document.getElementById('active-view-label').textContent = 'Directorio';
             refreshUI();
         };
 
@@ -170,17 +165,17 @@
             
             document.getElementById('grid-carreras').innerHTML = results.map(p => {
                 const u = universities.find(x => x.id === p.universityId);
-                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex flex-col justify-between min-w-0">
-                    <div class="min-w-0">
-                        <h4 class="font-bold text-sm text-slate-900 group-hover:text-brand-600 leading-tight truncate">${escapeHtml(p.name)}</h4>
-                        <p class="text-[11px] text-slate-500 mt-1 truncate"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
+                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition group flex flex-col justify-between w-full card-container">
+                    <div class="text-container">
+                        <h4 class="font-bold text-sm text-slate-900 truncate-text">${escapeHtml(p.name)}</h4>
+                        <p class="text-[11px] text-slate-500 mt-1 truncate-text"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3">
                         <span class="bg-brand-50 text-brand-700 text-[10px] font-bold px-2 py-1 rounded-md border border-brand-100">${escapeHtml(p.period)}</span>
-                        <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-md border border-slate-200 truncate">${escapeHtml(formatCost(p.cost))}</span>
+                        <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-md border border-slate-200 truncate-text">${escapeHtml(formatCost(p.cost))}</span>
                     </div>
                 </div>`;
-            }).join('') || `<div class="col-span-full text-center py-10"><i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i><p class="text-slate-500 text-sm">No se encontraron carreras.</p></div>`;
+            }).join('') || `<div class="col-span-full text-center py-10"><p class="text-slate-500 text-sm">No se encontraron carreras.</p></div>`;
         };
 
         window.clearSearch = function() {
@@ -193,21 +188,24 @@
             document.getElementById('stat-programs').textContent = programs.length;
             document.getElementById('count-total').textContent = programs.length;
 
-            // AQUI ESTA EL ARREGLO: Se cambió el texto por un ICONO para que nunca se salga del cuadro.
+            // ARREGLO VISUAL: Icono en lugar de texto para que NUNCA se salga
             document.getElementById('grid-universidades').innerHTML = universities.map(u => {
                 const progCount = programs.filter(p => p.universityId === u.id).length;
-                return `<div onclick="searchUniversity('${escapeHtml(u.name)}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex items-center gap-3 w-full min-w-0 overflow-hidden">
-                    <!-- ICONO FIJO (Nunca se sale) -->
-                    <div class="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 shrink-0 group-hover:bg-brand-600 group-hover:text-white transition">
+                return `<div onclick="searchUniversity('${escapeHtml(u.name)}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition group w-full card-container">
+                    
+                    <!-- Icono Fijo -->
+                    <div class="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 shrink-0 mr-3">
                         <i class="fa-solid fa-building-columns text-xl"></i>
                     </div>
-                    <!-- Texto estrictamente controlado -->
-                    <div class="flex-1 min-w-0 pr-2">
-                        <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(u.name)}</h4>
-                        <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)}</p>
-                        <p class="text-[10px] font-bold text-brand-600 mt-0.5">${progCount} carreras</p>
+
+                    <!-- Texto truncado para que no se salga -->
+                    <div class="text-container">
+                        <h4 class="font-bold text-sm text-slate-900 truncate-text">${escapeHtml(u.name)}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 truncate-text"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)}</p>
+                        <p class="text-[10px] font-bold text-brand-600 mt-1">${progCount} carreras</p>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0"></i>
+                    
+                    <i class="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0 ml-2"></i>
                 </div>`;
             }).join('');
         }
@@ -234,7 +232,7 @@
                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Requisitos</p>
                     <p class="text-xs text-slate-700">${escapeHtml(p.requirements || 'Consultar sitio web')}</p>
                 </div>
-                <a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-accent-600 hover:bg-accent-700 text-white text-center py-3 rounded-xl font-bold text-sm shadow-md transition">Visitar Sitio Oficial</a>`;
+                <a href="${escapeHtml(u ? u.website : '#')}" target="_blank" class="block bg-accent-600 text-white text-center py-3 rounded-xl font-bold text-sm shadow-md transition">Visitar Sitio Oficial</a>`;
             document.getElementById('detail-modal').classList.remove('hidden');
         };
 
