@@ -18,7 +18,6 @@
     </script>
     <style>
         body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        /* Bloqueo estricto para que los textos no se salgan */
         .card { display: flex; align-items: center; width: 100%; max-width: 100%; overflow: hidden; }
         .card-text { flex: 1; min-width: 0; overflow: hidden; padding-right: 8px; }
         .card-text h4, .card-text p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; margin: 0; }
@@ -55,34 +54,39 @@
                     Encuentra tu carrera en la <span class="text-brand-200">Educación Pública</span>
                 </h2>
                 <p class="text-brand-50 text-sm sm:text-base leading-relaxed mb-6 font-medium">
-                    <strong>Vamos a la U</strong> es la plataforma diseñada para ti. Descubre la oferta académica de las mejores universidades públicas de Colombia, revisa fechas de inscripción, conoce los requisitos y da el primer paso hacia tu sueño profesional.
+                    Descubre la oferta académica de las mejores universidades públicas de Colombia. Filtra por tu región, revisa fechas y da el primer paso.
                 </p>
-                
-                <div class="flex flex-wrap justify-center md:justify-start gap-3">
-                    <div class="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-book-open text-brand-200"></i>
-                        <span class="text-xs font-bold text-white">100+ Programas</span>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-building-columns text-brand-200"></i>
-                        <span class="text-xs font-bold text-white">30 Universidades</span>
-                    </div>
-                </div>
             </div>
             <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none hidden md:block">
                 <i class="fa-solid fa-graduation-cap text-[250px] text-white"></i>
             </div>
         </section>
 
-        <!-- BUSCADOR -->
-        <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-2 items-center w-full">
+        <!-- FILTROS Y BUSCADOR -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col gap-3 w-full">
+            <!-- Barra de búsqueda -->
             <div class="flex gap-3 items-center w-full bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 min-w-0">
                 <i class="fa-solid fa-magnifying-glass text-brand-500 shrink-0"></i>
-                <input type="text" id="search-input" placeholder="Busca tu carrera (Ej: Medicina, Sistemas...)" oninput="handleSearch(this.value)" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
-                <button onclick="clearSearch()" class="text-slate-400 hover:text-brand-600 hidden shrink-0" id="clear-btn"><i class="fa-solid fa-xmark"></i></button>
+                <input type="text" id="search-input" placeholder="Busca una carrera (Ej: Medicina, Derecho...)" oninput="applyFilters()" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
             </div>
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0 bg-slate-100 px-4 py-2.5 rounded-xl w-full sm:w-auto text-center">
-                <span id="count-total" class="text-brand-600 text-base">0</span> carreras
+            
+            <!-- Selectores de territorio -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full">
+                <select id="filter-dept" onchange="updateCities(); applyFilters();" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
+                    <option value="">Todos los Departamentos</option>
+                </select>
+                
+                <select id="filter-city" onchange="applyFilters();" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-brand-500">
+                    <option value="">Todas las Ciudades</option>
+                </select>
+
+                <button onclick="clearFilters()" class="bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold py-2.5 rounded-xl text-sm transition border border-brand-100 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-filter-circle-xmark"></i> Limpiar Filtros
+                </button>
+            </div>
+            
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider text-right mt-1">
+                Mostrando <span id="count-total" class="text-brand-600 text-base">0</span> carreras
             </div>
         </div>
 
@@ -94,7 +98,7 @@
             <div id="grid-universidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full"></div>
         </div>
 
-        <!-- VISTA 2: RESULTADOS DE BÚSQUEDA (Agrupados por universidad) -->
+        <!-- VISTA 2: RESULTADOS DE BÚSQUEDA -->
         <div id="view-carreras" class="hidden space-y-4 w-full">
             <h2 class="text-lg font-black text-slate-800 px-1 flex items-center gap-2" id="titulo-carreras">
                 <i class="fa-solid fa-magnifying-glass text-brand-600"></i> Resultados
@@ -166,6 +170,7 @@
             onSnapshot(collection(db, 'vamos_universities'), (snapshot) => { 
                 universities = snapshot.docs.map(d => ({ firebaseId: d.id, ...d.data() })); 
                 universities.sort((a, b) => (a.name || '').localeCompare(b.name || '')); 
+                populateDepartments();
                 refreshUI(); 
             });
             onSnapshot(collection(db, 'vamos_programs'), (snapshot) => { 
@@ -173,6 +178,36 @@
                 refreshUI(); 
             });
         }
+
+        function populateDepartments() {
+            const depts = [...new Set(universities.map(u => u.department).filter(Boolean))].sort();
+            const select = document.getElementById('filter-dept');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">Todos los Departamentos</option>' + depts.map(d => `<option value="${d}">${d}</option>`).join('');
+            select.value = currentVal;
+        }
+
+        window.updateCities = function() {
+            const dept = document.getElementById('filter-dept').value;
+            const citySelect = document.getElementById('filter-city');
+            
+            let cities = [];
+            if (dept) {
+                cities = [...new Set(universities.filter(u => u.department === dept).map(u => u.city).filter(Boolean))].sort();
+            } else {
+                cities = [...new Set(universities.map(u => u.city).filter(Boolean))].sort();
+            }
+            
+            citySelect.innerHTML = '<option value="">Todas las Ciudades</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+        };
+
+        window.clearFilters = function() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-dept').value = '';
+            document.getElementById('filter-city').value = '';
+            updateCities();
+            applyFilters();
+        };
 
         window.promptAdmin = function() {
             if (isAdmin) { 
@@ -190,12 +225,15 @@
 
         window.logoutAdmin = function() { isAdmin = false; document.getElementById('view-admin').classList.add('hidden'); document.getElementById('view-universidades').classList.remove('hidden'); };
 
-        // NUEVA LÓGICA DE BÚSQUEDA: Agrupa por Universidad
-        window.handleSearch = function(val) {
-            const term = (val || '').toLowerCase().trim();
-            document.getElementById('clear-btn').classList.toggle('hidden', !term);
+        // LOGICA DE FILTRADO COMBINADO (Texto + Dept + Ciudad)
+        window.applyFilters = function() {
+            const term = (document.getElementById('search-input').value || '').toLowerCase().trim();
+            const dept = document.getElementById('filter-dept').value;
+            const city = document.getElementById('filter-city').value;
             
-            if (!term) { 
+            const isFiltering = term || dept || city;
+            
+            if (!isFiltering) { 
                 document.getElementById('view-carreras').classList.add('hidden'); 
                 document.getElementById('view-universidades').classList.remove('hidden'); 
                 return; 
@@ -204,28 +242,46 @@
             document.getElementById('view-universidades').classList.add('hidden');
             document.getElementById('view-carreras').classList.remove('hidden');
             
-            // 1. Buscar los programas que coinciden con la búsqueda
-            const matchedPrograms = programs.filter(p => p.name.toLowerCase().includes(term));
+            // 1. Filtrar universidades por territorio
+            const validUniversities = universities.filter(u => {
+                if (dept && u.department !== dept) return false;
+                if (city && u.city !== city) return false;
+                return true;
+            });
             
-            // 2. Agrupar esos programas por Universidad
+            // 2. Filtrar programas
+            let matchedPrograms = programs.filter(p => {
+                const u = validUniversities.find(x => x.id === p.universityId);
+                if (!u) return false; // Si la universidad no está en el territorio, se descarta
+                
+                if (term) {
+                    const matchProgram = p.name.toLowerCase().includes(term);
+                    const matchUni = u.name.toLowerCase().includes(term);
+                    if (!matchProgram && !matchUni) return false;
+                }
+                return true;
+            });
+            
+            // 3. Agrupar por universidad
             const uniMap = {};
             matchedPrograms.forEach(p => {
                 if (!uniMap[p.universityId]) {
-                    const uniData = universities.find(x => x.id === p.universityId);
-                    if(uniData) {
-                        uniMap[p.universityId] = { uni: uniData, programs: [] };
-                    }
+                    const uniData = validUniversities.find(x => x.id === p.universityId);
+                    uniMap[p.universityId] = { uni: uniData, programs: [] };
                 }
-                if(uniMap[p.universityId]) {
-                    uniMap[p.universityId].programs.push(p);
-                }
+                uniMap[p.universityId].programs.push(p);
             });
             
             const groupedResults = Object.values(uniMap);
+            document.getElementById('count-total').textContent = matchedPrograms.length;
             
-            document.getElementById('titulo-carreras').innerHTML = `<i class="fa-solid fa-building-columns text-brand-600"></i> Universidades que ofrecen "${escapeHtml(val)}" (${groupedResults.length})`;
+            let titleText = 'Resultados';
+            if (term) titleText += ` para "${term}"`;
+            if (city) titleText += ` en ${city}`;
+            else if (dept) titleText += ` en ${dept}`;
             
-            // 3. Renderizar tarjetas de universidades con los programas encontrados
+            document.getElementById('titulo-carreras').innerHTML = `<i class="fa-solid fa-building-columns text-brand-600"></i> ${titleText} (${groupedResults.length})`;
+            
             document.getElementById('grid-carreras').innerHTML = groupedResults.map(group => {
                 return `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-brand-500 transition flex flex-col justify-between">
                     <div class="flex items-center gap-3 mb-3 border-b border-slate-100 pb-3">
@@ -234,12 +290,12 @@
                         </div>
                         <div class="min-w-0">
                             <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(group.uni.name)}</h4>
-                            <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(group.uni.city)}</p>
+                            <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(group.uni.city)}, ${escapeHtml(group.uni.department)}</p>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 flex-1">
                         <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Programa(s) encontrado(s):</p>
-                        <ul class="list-disc list-inside text-xs text-brand-700 font-bold">
+                        <ul class="list-disc list-inside text-xs text-brand-700 font-bold space-y-1">
                             ${group.programs.map(p => `<li>${escapeHtml(p.name)}</li>`).join('')}
                         </ul>
                     </div>
@@ -247,10 +303,8 @@
                         Ver detalles de inscripción
                     </button>
                 </div>`;
-            }).join('') || `<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200"><i class="fa-solid fa-magnifying-glass text-4xl text-slate-300 mb-3"></i><p class="text-slate-500 text-sm">Ninguna universidad registrada ofrece esta carrera actualmente.</p></div>`;
+            }).join('') || `<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200"><i class="fa-solid fa-map-location-dot text-4xl text-slate-300 mb-3"></i><p class="text-slate-500 text-sm">No hay oferta académica que coincida con estos filtros.</p></div>`;
         };
-
-        window.clearSearch = function() { document.getElementById('search-input').value = ''; handleSearch(''); };
 
         function refreshUI() {
             document.getElementById('stat-universities').textContent = universities.length;
@@ -259,7 +313,7 @@
 
             document.getElementById('grid-universidades').innerHTML = universities.map(u => {
                 const progCount = programs.filter(p => p.universityId === u.id).length;
-                return `<div onclick="handleSearch('${escapeHtml(u.name)}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer card hover:border-brand-500 transition">
+                return `<div onclick="document.getElementById('search-input').value='${escapeHtml(u.name)}'; applyFilters();" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer card hover:border-brand-500 transition">
                     
                     <div class="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 shrink-0 mr-3">
                         <i class="fa-solid fa-building-columns text-xl"></i>
@@ -267,7 +321,7 @@
 
                     <div class="card-text">
                         <h4 class="font-bold text-sm text-slate-900">${escapeHtml(u.name)}</h4>
-                        <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)}</p>
+                        <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)} - ${escapeHtml(u.department)}</p>
                         <p class="text-[10px] font-bold text-brand-600 mt-1">${progCount} carreras</p>
                     </div>
                     
