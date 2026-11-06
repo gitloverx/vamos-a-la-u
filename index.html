@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0d9488">
-    <title>Vamos a la U | Directorio Nacional</title>
+    <title>Vamos a la U | Directorio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 class="font-black text-lg tracking-tight text-slate-900 leading-none truncate">VAMOS A LA U</h1>
-                    <span id="active-view-label" class="text-xs text-brand-600 font-semibold uppercase tracking-wider block mt-1">Directorio</span>
+                    <span id="active-view-label" class="text-[11px] text-brand-600 font-semibold uppercase tracking-wider block mt-1">Directorio</span>
                 </div>
             </div>
             <button onclick="promptAdmin()" class="text-slate-400 hover:text-brand-600 font-bold text-sm flex items-center gap-2 shrink-0">
@@ -41,47 +41,48 @@
         </div>
     </header>
 
-    <!-- MAIN -->
+    <!-- CONTENIDO (Ancho completo en celular, limitado en PC) -->
     <main class="flex-1 w-full max-w-7xl mx-auto p-4 space-y-5">
         
         <!-- BUSCADOR -->
         <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 items-center w-full">
-            <div class="flex gap-3 items-center w-full bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
+            <div class="flex gap-3 items-center w-full bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 min-w-0">
                 <i class="fa-solid fa-magnifying-glass text-brand-500 shrink-0"></i>
                 <input type="text" id="search-input" placeholder="Buscar carrera..." oninput="handleSearch(this.value)" class="w-full bg-transparent text-sm focus:outline-none font-medium text-slate-800 min-w-0">
                 <button onclick="clearSearch()" class="text-slate-400 hover:text-brand-600 hidden shrink-0" id="clear-btn"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0 bg-slate-100 px-4 py-2 rounded-xl">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0 bg-slate-100 px-4 py-2 rounded-xl w-full sm:w-auto text-center">
                 <span id="count-total" class="text-brand-600 text-base">0</span> carreras
             </div>
         </div>
 
         <!-- VISTA 1: UNIVERSIDADES -->
         <div id="view-universidades" class="space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800">Universidades Públicas</h2>
+            <h2 class="text-lg font-black text-slate-800 px-1">Universidades Públicas</h2>
+            <!-- Grid que se adapta: 1 columna celular, 2 tablet, 3 PC -->
             <div id="grid-universidades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
         </div>
 
         <!-- VISTA 2: CARRERAS -->
         <div id="view-carreras" class="hidden space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800" id="titulo-carreras">Resultados</h2>
+            <h2 class="text-lg font-black text-slate-800 px-1" id="titulo-carreras">Resultados</h2>
             <div id="grid-carreras" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
         </div>
 
         <!-- VISTA 3: ADMIN -->
         <div id="view-admin" class="hidden space-y-4 w-full">
-            <h2 class="text-lg font-black text-slate-800">Panel Admin</h2>
+            <h2 class="text-lg font-black text-slate-800 px-1">Panel Admin</h2>
             <div class="grid grid-cols-2 gap-4 max-w-md">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 border-l-4 border-l-brand-500 shadow-sm">
-                    <span class="text-xs uppercase font-bold text-slate-400">Universidades</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Universidades</span>
                     <h3 id="stat-universities" class="text-2xl font-black text-slate-900 mt-1">0</h3>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 border-l-4 border-l-accent-500 shadow-sm">
-                    <span class="text-xs uppercase font-bold text-slate-400">Carreras</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Carreras</span>
                     <h3 id="stat-programs" class="text-2xl font-black text-slate-900 mt-1">0</h3>
                 </div>
             </div>
-            <button onclick="logoutAdmin()" class="bg-slate-200 hover:bg-rose-100 text-slate-700 hover:text-rose-700 font-bold py-2.5 px-6 rounded-xl text-sm transition">Salir</button>
+            <button onclick="logoutAdmin()" class="bg-slate-200 hover:bg-rose-100 text-slate-700 hover:text-rose-700 font-bold py-2.5 px-6 rounded-xl text-sm transition">Cerrar Sesión</button>
         </div>
     </main>
 
@@ -117,7 +118,6 @@
         let db, auth; let universities = []; let programs = []; let isAdmin = false;
         
         const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        // Si el costo es un número lo formatea, si es texto (ej. "Varía...") lo deja tal cual
         const formatCost = (c) => { return typeof c === 'number' ? '$' + c.toLocaleString('es-CO') : c; };
 
         async function initFirebase() {
@@ -171,9 +171,9 @@
             
             document.getElementById('grid-carreras').innerHTML = results.map(p => {
                 const u = universities.find(x => x.id === p.universityId);
-                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex flex-col justify-between">
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-900 group-hover:text-brand-600 leading-tight">${escapeHtml(p.name)}</h4>
+                return `<div onclick="openDetail('${p.firebaseId}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex flex-col justify-between min-w-0">
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-sm text-slate-900 group-hover:text-brand-600 leading-tight truncate">${escapeHtml(p.name)}</h4>
                         <p class="text-[11px] text-slate-500 mt-1 truncate"><i class="fa-solid fa-building-columns mr-1 text-brand-500"></i>${escapeHtml(u ? u.name : '')}</p>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3">
@@ -194,15 +194,15 @@
             document.getElementById('stat-programs').textContent = programs.length;
             document.getElementById('count-total').textContent = programs.length;
 
-            // RENDERIZADO DE UNIVERSIDADES (Estructura Flex a prueba de fallos)
+            // TARJETA DE UNIVERSIDAD (Estructura para evitar superposición)
             document.getElementById('grid-universidades').innerHTML = universities.map(u => {
                 const progCount = programs.filter(p => p.universityId === u.id).length;
-                return `<div onclick="searchUniversity('${escapeHtml(u.name)}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex items-center gap-3 w-full">
-                    <!-- Logo fijo a la izquierda -->
+                return `<div onclick="searchUniversity('${escapeHtml(u.name)}')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 hover:shadow-md transition group flex items-center gap-3 w-full min-w-0">
+                    <!-- Logo Fijo (shrink-0 evita que se aplaste) -->
                     <div class="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center text-brand-600 font-black text-sm shrink-0 group-hover:bg-brand-600 group-hover:text-white transition">
                         ${escapeHtml(u.shortName || u.name.substring(0,2))}
                     </div>
-                    <!-- Texto que se adapta -->
+                    <!-- Contenedor de Texto (min-w-0 permite que truncate funcione) -->
                     <div class="flex-1 min-w-0">
                         <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(u.name)}</h4>
                         <p class="text-xs text-slate-500 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(u.city)}</p>
